@@ -11,32 +11,42 @@ if (botonProyectos) {
     botonProyectos.addEventListener("click", mostrarProyectos);
 }
 
-let nombreDev = "Alejandro Camacho";
-let habilidades = ["React", "JavaScript", "Node.js", "CSS"];
-let experiencia = { años: 2, especialidad: "Desarrollo Web" };
+async function cargarProyectos() {
+    try {
+        const response = await fetch("https://api.github.com/users/AlexandroCamacho1000/repos");
+        if (!response.ok) {
+            throw new Error("Error al cargar los proyectos");
+        }
+        const proyectos = await response.json();
+        const contenedor = document.getElementById("contenedor-proyectos");
+        
+        contenedor.innerHTML = "";
+        proyectos.forEach(proyecto => {
+            contenedor.innerHTML += `
+                <div class="project-card">
+                    <h3>${proyecto.name}</h3>
+                    <p>${proyecto.description || "Sin descripción"}</p>
+                    <a href="${proyecto.html_url}" target="_blank" class="project-link">Ver en GitHub</a>
+                </div>
+            `;
+        });
 
-let misProyectos = [
-    { nombre: "App de Testimonios", techs: ["React", "CSS"] },
-    { nombre: "Contador de Clicks", techs: ["React"] },
-    { nombre: "Calculadora", techs: ["React"] },
-    { nombre: "App de Tareas", techs: ["React", "JavaScript"] }
-];
+        let total = document.querySelectorAll(".project-card").length;
+        let texto = document.getElementById("contador-proyectos");
+        if (texto) {
+            texto.innerText = "Total: " + total;
+        }
 
-let nombresProyectos = misProyectos.map(p => p.nombre);
-console.log(nombresProyectos);
+    } catch (error) {
+        console.log("Error al cargar proyectos de GitHub");
+        const contenedor = document.getElementById("contenedor-proyectos");
+        contenedor.innerHTML = "<p>No se pudieron cargar los proyectos</p>";
+    }
+}
 
-let proyectosReact = misProyectos.filter(p => p.techs.includes("React"));
-console.log(proyectosReact);
-
-let stackStats = misProyectos.flatMap(p => p.techs).reduce((acc, tech) => {
-    acc[tech] = (acc[tech] || 0) + 1;
-    return acc;
-}, {});
-
-console.log(stackStats);
+cargarProyectos();
 
 let contenedor = document.getElementById("contenedor-proyectos");
-
 if (contenedor) {
     contenedor.addEventListener("click", function(e) {
         let tarjeta = e.target.closest(".project-card");
@@ -47,26 +57,9 @@ if (contenedor) {
     });
 }
 
-function crearContador(inicial) {
-    let contador = inicial;
-    return {
-        incrementar: function() {
-            contador++;
-            return contador;
-        },
-        obtenerTotal: function() {
-            return contador;
-        }
-    };
-}
+let nombreDev = "Alejandro Camacho";
+let habilidades = ["React", "JavaScript", "Node.js", "CSS"];
+let experiencia = { años: 2, especialidad: "Desarrollo Web" };
 
-let totalTarjetas = document.querySelectorAll(".project-card").length;
-let contadorProyectos = crearContador(totalTarjetas);
-
-console.log(contadorProyectos.obtenerTotal());
-console.log(contadorProyectos.incrementar());
-
-let textoContador = document.getElementById("contador-proyectos");
-if (textoContador) {
-    textoContador.innerText = "Total: " + contadorProyectos.obtenerTotal();
-}
+console.log(habilidades);
+console.log(experiencia);
